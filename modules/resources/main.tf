@@ -5,11 +5,11 @@ locals {
   loki_svc        = var.loki_mode == "distributed" ? "loki-distributed-gateway.${var.k8s_namespace}.svc.cluster.local" : "loki.${var.k8s_namespace}.svc.cluster.local:3100"
   grafana_svc     = "grafana.${var.k8s_namespace}.svc.cluster.local"
   has_bucket_name = var.loki_storage_s3_bucket_name != null && var.loki_storage_s3_bucket_name != ""
-  loki_enabled    = var.loki_enabled && (local.has_bucket_name || var.loki_mode == "single")
+  loki_enabled    = var.loki_enabled
 }
 
 resource "helm_release" "metrics_server" {
-  count      = var.prometheus_enabled || var.metrics_server_enabled ? 1 : 0
+  count      = var.metrics_server_enabled ? 1 : 0
   name       = var.helm_release_name_metrics_server
   repository = "https://kubernetes-sigs.github.io/metrics-server/"
   chart      = "metrics-server"
@@ -108,7 +108,7 @@ resource "helm_release" "grafana" {
 
 resource "helm_release" "loki" {
   count      = local.loki_enabled && var.loki_mode == "single" ? 1 : 0
-  name       = var.helm_release_name_loki
+  name       = coalesce(var.helm_release_name_loki, "loki")
   repository = "https://grafana.github.io/helm-charts"
   chart      = "loki"
   namespace  = var.k8s_namespace
@@ -138,7 +138,7 @@ resource "helm_release" "loki" {
 
 resource "helm_release" "loki_distributed" {
   count      = var.loki_enabled && var.loki_mode == "distributed" ? 1 : 0
-  name       = var.helm_release_name_loki
+  name       = coalesce(var.helm_release_name_loki, "loki-distributed")
   repository = "https://grafana.github.io/helm-charts"
   chart      = "loki-distributed"
   namespace  = var.k8s_namespace
@@ -240,7 +240,7 @@ resource "helm_release" "promtail" {
 }
 
 locals {
-  release_metrics_server = var.prometheus_enabled || var.metrics_server_enabled ? helm_release.metrics_server[0] : null
+  release_metrics_server = var.metrics_server_enabled ? helm_release.metrics_server[0] : null
   release_grafana        = var.grafana_enabled ? helm_release.grafana[0] : null
   release_prometheus     = var.prometheus_enabled ? helm_release.prometheus[0] : null
   release_loki           = local.loki_enabled ? (var.loki_mode == "distributed" ? helm_release.loki_distributed[0] : helm_release.loki[0]) : null

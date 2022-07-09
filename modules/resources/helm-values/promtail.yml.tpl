@@ -1,3 +1,4 @@
 config:
-  lokiAddress: ${loki_address}
+  clients:
+    - url: ${loki_address}
 

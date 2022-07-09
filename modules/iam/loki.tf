@@ -2,8 +2,8 @@
 
 
 locals {
-  loki_enabled  = var.loki_enabled && var.loki_storage_s3_bucket_name != "" && var.loki_storage_s3_bucket_name != null
-  kms_enabled   = var.loki_enabled && var.loki_storage_kms_key_arn != "" && var.loki_storage_kms_key_arn != null
+  loki_enabled  = var.loki_enabled
+  kms_enabled   = var.loki_enabled
   s3_bucket_arn = "arn:${data.aws_partition.current.partition}:s3:::${var.loki_storage_s3_bucket_name}"
 }
 

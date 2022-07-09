@@ -47,6 +47,8 @@ loki:
       chunk_encoding: snappy
       chunk_retain_period: 1m
       max_transfer_retries: 0
+      wal:
+        dir: "/var/loki/wal"
       lifecycler:
         join_after: 0s
         ring:
@@ -74,6 +76,7 @@ loki:
       reject_old_samples_max_age: 168h
       max_cache_freshness_per_query: 10m
       max_concurrent_tail_requests: 20
+      split_queries_by_interval: 15m
 
     chunk_store_config:
       max_look_back_period: 0s
@@ -81,7 +84,6 @@ loki:
     query_range:
       align_queries_with_step: true
       max_retries: 5
-      split_queries_by_interval: 15m
       cache_results: true
       results_cache:
         cache:
@@ -99,6 +101,8 @@ compactor:
       eks.amazonaws.com/role-arn: ${loki_compactor_iam_role_arn}
 
 ingester:
+  persistence:
+    enabled: true
   replicas: 2
 
 distributor:

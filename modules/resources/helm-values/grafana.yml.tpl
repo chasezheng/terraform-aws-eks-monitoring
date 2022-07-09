@@ -1,4 +1,3 @@
----
 rbac:
   create: true
   ## Use an existing ClusterRole/Role (depending on rbac.namespaced false/true)
@@ -22,6 +21,14 @@ serviceAccount:
   annotations:
     eks.amazonaws.com/role-arn: ${grafana_iam_role_arn}
 
+resources:
+  limits:
+    cpu: 200m
+    memory: 512Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
 autoscaling:
   enabled: true
   minReplicas: 1
@@ -35,20 +42,6 @@ autoscaling:
     resource:
       name: memory
       targetAverageUtilization: 60
-
-persistence:
-  enabled: false
-  # type: pvc
-  # storageClassName: default
-  # accessModes:
-  #   - ReadWriteOnce
-  # size: 10Gi
-  # # annotations: {}
-  # finalizers:
-  #   - kubernetes.io/pvc-protection
-  # # selectorLabels: {}
-  # # subPath: ""
-  # # existingClaim:
 
 persistence:
   enabled: false
@@ -81,7 +74,7 @@ plugins:
   - grafana-kubernetes-app
 
 datasources:
-  datasources.yaml:
+  "datasources.yaml":
     apiVersion: 1
     datasources:
       - name: Prometheus

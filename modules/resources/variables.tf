@@ -159,7 +159,7 @@ variable "helm_release_name_grafana" {
 variable "helm_release_name_loki" {
   type        = string
   description = "Release name"
-  default     = "loki"
+  default     = null
 }
 
 variable "helm_release_name_promtail" {
@@ -213,7 +213,7 @@ variable "helm_wait_for_completion" {
 variable "helm_wait_for_jobs" {
   type        = bool
   description = "Wait until all Jobs have been completed before marking the release as successful ?"
-  default     = true
+  default     = false
 }
 
 variable "helm_verify" {
@@ -237,13 +237,13 @@ variable "helm_reuse_values" {
 variable "helm_reset_values" {
   type        = bool
   description = "When upgrading, reset the values to the ones built into the chart ?"
-  default     = false
+  default     = true
 }
 
 variable "helm_force_update" {
   type        = bool
   description = "Force resource update through delete/recreate if needed ?"
-  default     = false
+  default     = true
 }
 
 variable "helm_create_namespace" {
