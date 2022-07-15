@@ -134,6 +134,41 @@ variable "chart_version_loki" {
   default     = null
 }
 
+variable "helm_values_metrics_server" {
+  type = map(string)
+  default = {}
+}
+
+variable "helm_values_prometheus" {
+  type = map(string)
+  default = {}
+}
+
+variable "helm_values_promtail" {
+  type = map(string)
+  default = {}
+}
+
+variable "helm_values_loki_distributed" {
+  type = map(string)
+  default = {}
+}
+
+variable "helm_values_grafana" {
+  type = map(string)
+  default = {}
+}
+
+variable "helm_values_fluent_bit" {
+  type = map(string)
+  default = {}
+}
+
+variable "helm_values_loki" {
+  type = map(string)
+  default = {}
+}
+
 ## end chart versions
 
 ## helm

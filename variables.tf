@@ -34,6 +34,41 @@ variable "grafana_enabled" {
   default     = false
 }
 
+variable "helm_values_metrics_server" {
+  type = map(string)
+  default = {}
+}
+
+variable "helm_values_prometheus" {
+  type = map(string)
+  default = {}
+}
+
+variable "helm_values_promtail" {
+  type = map(string)
+  default = {}
+}
+
+variable "helm_values_loki_distributed" {
+  type = map(string)
+  default = {}
+}
+
+variable "helm_values_grafana" {
+  type = map(string)
+  default = {}
+}
+
+variable "helm_values_fluent_bit" {
+  type = map(string)
+  default = {}
+}
+
+variable "helm_values_loki" {
+  type = map(string)
+  default = {}
+}
+
 variable "loki_mode" {
   type        = string
   description = "Loki mode, must be either `single` or `distributed`"

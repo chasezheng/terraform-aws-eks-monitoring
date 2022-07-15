@@ -66,5 +66,11 @@ module "resources" {
   chart_version_fluent_bit       = var.chart_version_fluent_bit
   chart_version_loki             = var.chart_version_loki
 
-
+  helm_values_fluent_bit       = var.helm_values_fluent_bit
+  helm_values_grafana          = var.helm_values_grafana
+  helm_values_loki             = var.helm_values_loki
+  helm_values_loki_distributed = var.helm_values_loki_distributed
+  helm_values_promtail         = var.helm_values_promtail
+  helm_values_prometheus       = var.helm_values_prometheus
+  helm_values_metrics_server   = var.helm_values_metrics_server
 }

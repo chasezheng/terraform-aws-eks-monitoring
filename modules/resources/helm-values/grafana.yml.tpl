@@ -1,33 +1,8 @@
-rbac:
-  create: true
-  ## Use an existing ClusterRole/Role (depending on rbac.namespaced false/true)
-  # useExistingRole: name-of-some-(cluster)role
-  pspEnabled: true
-  pspUseAppArmor: true
-  namespaced: false
-  extraRoleRules: []
-  # - apiGroups: []
-  #   resources: []
-  #   verbs: []
-  extraClusterRoleRules: []
-  # - apiGroups: []
-  #   resources: []
-  #   verbs: []
-
 serviceAccount:
   create: true
   name: ${grafana_service_account_name}
-  nameTest:
   annotations:
     eks.amazonaws.com/role-arn: ${grafana_iam_role_arn}
-
-resources:
-  limits:
-    cpu: 200m
-    memory: 512Mi
-  requests:
-    cpu: 50m
-    memory: 64Mi
 
 autoscaling:
   enabled: true
@@ -43,31 +18,6 @@ autoscaling:
       name: memory
       targetAverageUtilization: 60
 
-persistence:
-  enabled: false
-  # type: pvc
-  # storageClassName: default
-  # accessModes:
-  #   - ReadWriteOnce
-  # size: 10Gi
-  # annotations: {}
-  # finalizers:
-  #   - kubernetes.io/pvc-protection
-  # # selectorLabels: {}
-  # # subPath: ""
-  # # existingClaim:
-  inMemory:
-    enabled: true
-    sizeLimit: 300Mi
-
-adminUser: admin
-# adminPassword: strongpassword
-
-# Use an existing secret for the admin user.
-# admin:
-#   existingSecret: ""
-#   userKey: admin-user
-#   passwordKey: admin-password
 
 plugins:
   - grafana-piechart-panel

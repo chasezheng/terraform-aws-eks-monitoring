@@ -33,10 +33,18 @@ resource "helm_release" "metrics_server" {
   dependency_update = var.helm_dependency_update
   skip_crds         = var.helm_skip_crds
 
+  dynamic "set" {
+    for_each = var.helm_values_metrics_server
+    content {
+      name  = set.key
+      value = set.value
+      type  = "auto"
+    }
+  }
 }
 
 resource "helm_release" "prometheus" {
-  count = var.prometheus_enabled ? 1 : 0
+  count      = var.prometheus_enabled ? 1 : 0
   depends_on = [
     helm_release.metrics_server,
   ]
@@ -67,6 +75,14 @@ resource "helm_release" "prometheus" {
     file("${path.module}/helm-values/prometheus.yml")
   ]
 
+  dynamic "set" {
+    for_each = var.helm_values_prometheus
+    content {
+      name  = set.key
+      value = set.value
+      type  = "auto"
+    }
+  }
 }
 
 resource "helm_release" "grafana" {
@@ -104,6 +120,14 @@ resource "helm_release" "grafana" {
     })
   ]
 
+  dynamic "set" {
+    for_each = var.helm_values_grafana
+    content {
+      name  = set.key
+      value = set.value
+      type  = "auto"
+    }
+  }
 }
 
 resource "helm_release" "loki" {
@@ -134,6 +158,15 @@ resource "helm_release" "loki" {
   values = [
     file("${path.module}/helm-values/loki.yml")
   ]
+
+  dynamic "set" {
+    for_each = var.helm_values_loki
+    content {
+      name  = set.key
+      value = set.value
+      type  = "auto"
+    }
+  }
 }
 
 resource "helm_release" "loki_distributed" {
@@ -171,6 +204,14 @@ resource "helm_release" "loki_distributed" {
       loki_compactor_service_account_name = var.loki_compactor_service_account_name
     })
   ]
+  dynamic "set" {
+    for_each = var.helm_values_loki_distributed
+    content {
+      name  = set.key
+      value = set.value
+      type  = "auto"
+    }
+  }
 }
 
 resource "helm_release" "fluent_bit" {
@@ -204,6 +245,14 @@ resource "helm_release" "fluent_bit" {
     })
   ]
 
+  dynamic "set" {
+    for_each = var.helm_values_fluent_bit
+    content {
+      name  = set.key
+      value = set.value
+      type  = "auto"
+    }
+  }
 }
 
 resource "helm_release" "promtail" {
@@ -237,6 +286,14 @@ resource "helm_release" "promtail" {
     })
   ]
 
+  dynamic "set" {
+    for_each = var.helm_values_promtail
+    content {
+      name  = set.key
+      value = set.value
+      type  = "auto"
+    }
+  }
 }
 
 locals {
