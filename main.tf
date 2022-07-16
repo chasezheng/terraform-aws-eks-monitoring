@@ -52,6 +52,10 @@ module "resources" {
   loki_enabled           = var.loki_enabled
   grafana_enabled        = var.grafana_enabled
 
+  loki_service_account_name           = var.loki_k8s_sa_name
+  loki_compactor_service_account_name = var.loki_compactor_k8s_sa_name
+  grafana_service_account_name        = var.grafana_k8s_sa_name
+
   loki_iam_role_arn           = var.loki_enabled ? module.iam.role.loki.arn : null
   loki_compactor_iam_role_arn = var.loki_enabled ? module.iam.role.loki_compactor.arn : null
   grafana_iam_role_arn        = var.grafana_enabled ? module.iam.role.grafana.arn : null

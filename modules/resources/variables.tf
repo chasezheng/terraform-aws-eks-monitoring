@@ -57,7 +57,7 @@ variable "loki_storage_s3_bucket_name" {
 variable "loki_service_account_name" {
   type        = string
   description = "Name of the Kubernetes service account for Loki components"
-  default     = "loki-distributed"
+  default     = "loki"
 }
 
 variable "loki_iam_role_arn" {
