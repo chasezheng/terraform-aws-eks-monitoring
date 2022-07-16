@@ -35,37 +35,37 @@ variable "grafana_enabled" {
 }
 
 variable "helm_values_metrics_server" {
-  type = map(string)
+  type    = map(string)
   default = {}
 }
 
 variable "helm_values_prometheus" {
-  type = map(string)
+  type    = map(string)
   default = {}
 }
 
 variable "helm_values_promtail" {
-  type = map(string)
+  type    = map(string)
   default = {}
 }
 
 variable "helm_values_loki_distributed" {
-  type = map(string)
+  type    = map(string)
   default = {}
 }
 
 variable "helm_values_grafana" {
-  type = map(string)
+  type    = map(string)
   default = {}
 }
 
 variable "helm_values_fluent_bit" {
-  type = map(string)
+  type    = map(string)
   default = {}
 }
 
 variable "helm_values_loki" {
-  type = map(string)
+  type    = map(string)
   default = {}
 }
 
@@ -166,43 +166,37 @@ variable "grafana_k8s_sa_name" {
 variable "chart_version_metrics_server" {
   type        = string
   description = "Chart version"
-  default     = null
+  default     = "3.8.2"
 }
 
 variable "chart_version_prometheus" {
   type        = string
   description = "Chart version"
-  default     = null
+  default     = "37.2.0"
 }
 
 variable "chart_version_promtail" {
   type        = string
   description = "Chart version"
-  default     = null
+  default     = "6.2.0"
 }
 
 variable "chart_version_loki_distributed" {
   type        = string
   description = "Chart version"
-  default     = null
-}
-
-variable "chart_version_grafana" {
-  type        = string
-  description = "Chart version"
-  default     = null
+  default     = "0.52.0"
 }
 
 variable "chart_version_fluent_bit" {
   type        = string
   description = "Chart version"
-  default     = null
+  default     = "2.3.1"
 }
 
 variable "chart_version_loki" {
   type        = string
   description = "Chart version"
-  default     = null
+  default     = "2.13.0"
 }
 
 ## end chart versions

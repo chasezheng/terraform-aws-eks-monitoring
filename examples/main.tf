@@ -12,8 +12,6 @@ module "monitoring" {
   chart_version_loki_distributed = var.chart_version_loki_distributed
   chart_version_promtail         = var.chart_version_promtail
   chart_version_prometheus       = var.chart_version_prometheus
-  chart_version_grafana          = var.chart_version_grafana
 
   grafana_enabled = true
-
 }

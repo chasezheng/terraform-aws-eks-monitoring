@@ -18,7 +18,6 @@ output "release" {
     metrics_server = local.release_metrics_server
     loki           = local.release_loki
     log_aggregator = local.release_aggregator
-    grafana        = local.release_grafana
     prometheus     = local.release_prometheus
   }
 }

@@ -1,7 +1,8 @@
 data "aws_region" "current" {}
 
 locals {
-  prom_svc        = "prometheus-server.${var.k8s_namespace}.svc.cluster.local"
+  prom_svc_port   = "80"
+  prom_svc        = "kube-prometheus-stack-prometheus.${var.k8s_namespace}.svc.cluster.local:${local.prom_svc_port}"
   loki_svc        = var.loki_mode == "distributed" ? "loki-distributed-gateway.${var.k8s_namespace}.svc.cluster.local" : "loki.${var.k8s_namespace}.svc.cluster.local:3100"
   grafana_svc     = "grafana.${var.k8s_namespace}.svc.cluster.local"
   has_bucket_name = var.loki_storage_s3_bucket_name != null && var.loki_storage_s3_bucket_name != ""
@@ -44,54 +45,15 @@ resource "helm_release" "metrics_server" {
 }
 
 resource "helm_release" "prometheus" {
-  count      = var.prometheus_enabled ? 1 : 0
+  count = var.prometheus_enabled ? 1 : 0
   depends_on = [
     helm_release.metrics_server,
   ]
   name       = var.helm_release_name_prometheus
   repository = "https://prometheus-community.github.io/helm-charts"
-  chart      = "prometheus"
+  chart      = "kube-prometheus-stack"
   namespace  = var.k8s_namespace
   version    = var.chart_version_prometheus
-
-  recreate_pods     = var.helm_recreate_pods
-  atomic            = var.helm_atomic_creation
-  cleanup_on_fail   = var.helm_cleanup_on_fail
-  wait              = var.helm_wait_for_completion
-  wait_for_jobs     = var.helm_wait_for_jobs
-  timeout           = var.helm_timeout_seconds
-  max_history       = var.helm_max_history
-  verify            = var.helm_verify
-  keyring           = var.helm_keyring
-  reuse_values      = var.helm_reuse_values
-  reset_values      = var.helm_reset_values
-  force_update      = var.helm_force_update
-  replace           = var.helm_replace
-  create_namespace  = var.helm_create_namespace
-  dependency_update = var.helm_dependency_update
-  skip_crds         = var.helm_skip_crds
-
-  values = [
-    file("${path.module}/helm-values/prometheus.yml")
-  ]
-
-  dynamic "set" {
-    for_each = var.helm_values_prometheus
-    content {
-      name  = set.key
-      value = set.value
-      type  = "auto"
-    }
-  }
-}
-
-resource "helm_release" "grafana" {
-  count      = var.grafana_enabled ? 1 : 0
-  name       = var.helm_release_name_grafana
-  repository = "https://grafana.github.io/helm-charts"
-  chart      = "grafana"
-  namespace  = var.k8s_namespace
-  version    = var.chart_version_grafana
 
   recreate_pods     = var.helm_recreate_pods
   atomic            = var.helm_atomic_creation
@@ -120,10 +82,30 @@ resource "helm_release" "grafana" {
     })
   ]
 
+  set {
+    name  = "grafana.enabled"
+    value = var.grafana_enabled ? 1 : 0
+    type  = "auto"
+  }
+
+  set {
+    name  = "prometheus.service.port"
+    value = local.prom_svc_port
+  }
+
+  dynamic "set" {
+    for_each = var.helm_values_prometheus
+    content {
+      name  = set.key
+      value = set.value
+      type  = "auto"
+    }
+  }
+
   dynamic "set" {
     for_each = var.helm_values_grafana
     content {
-      name  = set.key
+      name  = "grafana.${set.key}"
       value = set.value
       type  = "auto"
     }
@@ -298,9 +280,8 @@ resource "helm_release" "promtail" {
 
 locals {
   release_metrics_server = var.metrics_server_enabled ? helm_release.metrics_server[0] : null
-  release_grafana        = var.grafana_enabled ? helm_release.grafana[0] : null
   release_prometheus     = var.prometheus_enabled ? helm_release.prometheus[0] : null
   release_loki           = local.loki_enabled ? (var.loki_mode == "distributed" ? helm_release.loki_distributed[0] : helm_release.loki[0]) : null
   release_aggregator     = local.loki_enabled ? (var.loki_aggregator == "promtail" ? helm_release.promtail[0] : helm_release.fluent_bit[0]) : null
-  namespace              = var.prometheus_enabled ? local.release_prometheus.metadata[0].namespace : (var.grafana_enabled ? local.release_grafana.metadata[0].namespace : (local.loki_enabled ? local.release_loki.metadata[0].namespace : null))
+  namespace              = var.k8s_namespace
 }

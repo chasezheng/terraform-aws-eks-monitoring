@@ -95,77 +95,71 @@ variable "grafana_iam_role_arn" {
 variable "chart_version_metrics_server" {
   type        = string
   description = "Chart version"
-  default     = null
+  default     = "3.8.2"
 }
 
 variable "chart_version_prometheus" {
   type        = string
   description = "Chart version"
-  default     = null
+  default     = "37.2.0"
 }
 
 variable "chart_version_promtail" {
   type        = string
   description = "Chart version"
-  default     = null
+  default     = "6.2.0"
 }
 
 variable "chart_version_loki_distributed" {
   type        = string
   description = "Chart version"
-  default     = null
-}
-
-variable "chart_version_grafana" {
-  type        = string
-  description = "Chart version"
-  default     = null
+  default     = "0.52.0"
 }
 
 variable "chart_version_fluent_bit" {
   type        = string
   description = "Chart version"
-  default     = null
+  default     = "2.3.1"
 }
 
 variable "chart_version_loki" {
   type        = string
   description = "Chart version"
-  default     = null
+  default     = "2.13.0"
 }
 
 variable "helm_values_metrics_server" {
-  type = map(string)
+  type    = map(string)
   default = {}
 }
 
 variable "helm_values_prometheus" {
-  type = map(string)
+  type    = map(string)
   default = {}
 }
 
 variable "helm_values_promtail" {
-  type = map(string)
+  type    = map(string)
   default = {}
 }
 
 variable "helm_values_loki_distributed" {
-  type = map(string)
+  type    = map(string)
   default = {}
 }
 
 variable "helm_values_grafana" {
-  type = map(string)
+  type    = map(string)
   default = {}
 }
 
 variable "helm_values_fluent_bit" {
-  type = map(string)
+  type    = map(string)
   default = {}
 }
 
 variable "helm_values_loki" {
-  type = map(string)
+  type    = map(string)
   default = {}
 }
 
@@ -182,7 +176,7 @@ variable "helm_release_name_metrics_server" {
 variable "helm_release_name_prometheus" {
   type        = string
   description = "Release name"
-  default     = "prometheus"
+  default     = "kube-prometheus-stack"
 }
 
 variable "helm_release_name_grafana" {
@@ -224,7 +218,7 @@ variable "helm_timeout_seconds" {
 variable "helm_recreate_pods" {
   type        = bool
   description = "Perform pods restart during upgrade/rollback ?"
-  default     = true
+  default     = false
 }
 
 variable "helm_atomic_creation" {
@@ -296,7 +290,7 @@ variable "helm_replace" {
 variable "helm_dependency_update" {
   type        = bool
   description = "Run helm dependency update before installing the chart ?"
-  default     = false
+  default     = true
 }
 
 variable "helm_skip_crds" {
