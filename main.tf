@@ -26,54 +26,36 @@ locals {
 }
 
 module "iam" {
-  source = "./modules/iam"
-
-  cluster_oidc_provider = var.cluster_oidc_provider
-  k8s_namespace         = var.k8s_namespace
-
+  source                     = "./modules/iam"
+  oidc_url                   = var.oidc_url
+  oidc_arn                   = var.oidc_arn
+  k8s_namespace              = var.k8s_namespace
   loki_k8s_sa_name           = var.loki_k8s_sa_name
-  loki_compactor_k8s_sa_name = var.loki_compactor_k8s_sa_name
   grafana_k8s_sa_name        = var.grafana_k8s_sa_name
-
-  loki_storage_s3_bucket_name = local.s3_bucket_name
-  loki_storage_kms_key_arn    = local.kms_key_arn
-
-  grafana_enabled = var.grafana_enabled
-  loki_enabled    = var.loki_enabled
+  loki_storage_s3_bucket_arn = module.log_storage[0].bucket.arn
+  loki_storage_kms_key_arn   = local.kms_key_arn
 }
 
 module "resources" {
-  source = "./modules/resources"
-
-  k8s_namespace = var.k8s_namespace
-
-  metrics_server_enabled = var.metrics_server_enabled
-  prometheus_enabled     = var.prometheus_enabled
-  loki_enabled           = var.loki_enabled
-  grafana_enabled        = var.grafana_enabled
-
-  loki_service_account_name           = var.loki_k8s_sa_name
-  loki_compactor_service_account_name = var.loki_compactor_k8s_sa_name
-  grafana_service_account_name        = var.grafana_k8s_sa_name
-
-  loki_iam_role_arn           = var.loki_enabled ? module.iam.role.loki.arn : null
-  loki_compactor_iam_role_arn = var.loki_enabled ? module.iam.role.loki_compactor.arn : null
-  grafana_iam_role_arn        = var.grafana_enabled ? module.iam.role.grafana.arn : null
-
-  loki_storage_s3_bucket_name = local.s3_bucket_name
-
+  source                         = "./modules/resources"
+  k8s_namespace                  = var.k8s_namespace
+  metrics_server_enabled         = var.metrics_server_enabled
+  loki_service_account_name      = var.loki_k8s_sa_name
+  grafana_service_account_name   = var.grafana_k8s_sa_name
+  loki_iam_role_arn              = module.iam.loki_role.arn
+  grafana_iam_role_arn           = module.iam.grafana_role.arn
+  loki_storage_s3_bucket_name    = local.s3_bucket_name
   chart_version_metrics_server   = var.chart_version_metrics_server
   chart_version_prometheus       = var.chart_version_prometheus
   chart_version_promtail         = var.chart_version_promtail
   chart_version_loki_distributed = var.chart_version_loki_distributed
   chart_version_fluent_bit       = var.chart_version_fluent_bit
   chart_version_loki             = var.chart_version_loki
-
-  helm_values_fluent_bit       = var.helm_values_fluent_bit
-  helm_values_grafana          = var.helm_values_grafana
-  helm_values_loki             = var.helm_values_loki
-  helm_values_loki_distributed = var.helm_values_loki_distributed
-  helm_values_promtail         = var.helm_values_promtail
-  helm_values_prometheus       = var.helm_values_prometheus
-  helm_values_metrics_server   = var.helm_values_metrics_server
+  helm_values_fluent_bit         = var.helm_values_fluent_bit
+  helm_values_grafana            = var.helm_values_grafana
+  helm_values_loki               = var.helm_values_loki
+  helm_values_loki_distributed   = var.helm_values_loki_distributed
+  helm_values_promtail           = var.helm_values_promtail
+  helm_values_prometheus         = var.helm_values_prometheus
+  helm_values_metrics_server     = var.helm_values_metrics_server
 }

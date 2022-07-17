@@ -1,37 +1,22 @@
-variable "cluster_oidc_provider" {
+variable "oidc_url" {
   type        = string
   description = "OpenID Connect (OIDC) Identity Provider associated with the Kubernetes cluster"
-  default     = ""
+}
+
+variable "oidc_arn" {
+  type        = string
+  description = "OpenID Connect (OIDC) Identity Provider associated with the Kubernetes cluster"
 }
 
 variable "k8s_namespace" {
   type        = string
   description = "Name of the Kubernetes namespace to which resources will be deployed"
-  default     = "monitoring"
 }
 
 variable "metrics_server_enabled" {
   type        = bool
   description = "Enable Metrics Server?"
   default     = true
-}
-
-variable "prometheus_enabled" {
-  type        = bool
-  description = "Enable Prometheus?"
-  default     = true
-}
-
-variable "loki_enabled" {
-  type        = bool
-  description = "Enable Loki?"
-  default     = true
-}
-
-variable "grafana_enabled" {
-  type        = bool
-  description = "Enable Grafana?"
-  default     = false
 }
 
 variable "helm_values_metrics_server" {
@@ -140,19 +125,13 @@ variable "loki_storage_kms_key_enable_rotation" {
 variable "loki_storage_expiration_days" {
   type        = number
   description = "Number of days to retain objects; `0` means never expire"
-  default     = 0
+  default     = 90
 }
 
 variable "loki_k8s_sa_name" {
   type        = string
   description = "Name of the Kubernetes service account for Loki components"
   default     = "loki"
-}
-
-variable "loki_compactor_k8s_sa_name" {
-  type        = string
-  description = "Name of the Kubernetes service account for the Loki compactor"
-  default     = "loki-compactor"
 }
 
 variable "grafana_k8s_sa_name" {

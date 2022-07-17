@@ -1,7 +1,6 @@
 variable "s3_bucket_name" {
   type        = string
   description = "Name of S3 bucket created for Loki storage"
-  default     = ""
 }
 
 variable "create_s3_bucket_id_suffix" {
@@ -13,7 +12,7 @@ variable "create_s3_bucket_id_suffix" {
 variable "s3_force_destroy" {
   type        = bool
   description = "Force destroy bucket when running `terraform destroy`?"
-  default     = false
+  default     = true
 }
 
 variable "kms_key_arn" {
@@ -23,11 +22,11 @@ variable "kms_key_arn" {
 }
 
 variable "kms_key_alias" {
-  type = string
+  type        = string
   description = "(Optional) An alias for the generated KMS key; must start with `alias/`"
-  default = ""
+  default     = ""
   validation {
-    condition = var.kms_key_alias == "" || (length(var.kms_key_alias) > 6 && substr(var.kms_key_alias, 0, 6) == "alias/")
+    condition     = var.kms_key_alias == "" || (length(var.kms_key_alias) > 6 && substr(var.kms_key_alias, 0, 6) == "alias/")
     error_message = "Must start with `alias/` ."
   }
 }
@@ -41,17 +40,14 @@ variable "kms_key_deletion_window_in_days" {
 variable "kms_key_enable_rotation" {
   type        = bool
   description = "Enable KMS key rotation?"
-  default     = true
 }
 
 variable "create_kms_key" {
   type        = bool
   description = "Create KMS key?"
-  default     = true
 }
 
 variable "expiration_days" {
   type        = number
   description = "Number of days to retain objects; `0` means never expire"
-  default     = 0
 }

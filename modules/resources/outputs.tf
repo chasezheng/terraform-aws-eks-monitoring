@@ -1,14 +1,14 @@
 output "namespace" {
   description = "The name (`metadata.name`) of the Kubernetes namespace"
-  value       = local.namespace
+  value       = var.k8s_namespace
 }
 
 output "svc" {
   description = "Local Kubernetes service FQDNs"
   value = {
-    grafana    = var.grafana_enabled ? local.grafana_svc : null
-    loki       = var.loki_enabled ? local.loki_svc : null
-    prometheus = var.prometheus_enabled ? local.prom_svc : null
+    grafana    = local.grafana_svc
+    loki       = local.loki_svc
+    prometheus = local.prom_svc
   }
 }
 

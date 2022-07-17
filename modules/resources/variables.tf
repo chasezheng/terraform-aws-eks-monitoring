@@ -1,31 +1,11 @@
 variable "k8s_namespace" {
   type        = string
   description = "Name of a Kubernetes namespace which will be created for deploying the resources"
-  default     = "monitoring"
 }
 
 variable "metrics_server_enabled" {
   type        = bool
   description = "Enable Metrics Server?"
-  default     = true
-}
-
-variable "prometheus_enabled" {
-  type        = bool
-  description = "Enable Prometheus?"
-  default     = true
-}
-
-variable "loki_enabled" {
-  type        = bool
-  description = "Enable Loki?"
-  default     = true
-}
-
-variable "grafana_enabled" {
-  type        = bool
-  description = "Enable Grafana?"
-  default     = false
 }
 
 variable "loki_mode" {
@@ -51,43 +31,27 @@ variable "loki_aggregator" {
 variable "loki_storage_s3_bucket_name" {
   type        = string
   description = "Name of S3 bucket created for Loki storage"
-  default     = ""
 }
 
 variable "loki_service_account_name" {
   type        = string
   description = "Name of the Kubernetes service account for Loki components"
-  default     = "loki"
 }
 
 variable "loki_iam_role_arn" {
   type        = string
   description = "Loki IAM role ARN"
-  default     = ""
 }
 
-variable "loki_compactor_service_account_name" {
-  type        = string
-  description = "Name of the Kubernetes service account for the Loki compactor"
-  default     = "loki-compactor"
-}
-
-variable "loki_compactor_iam_role_arn" {
-  type        = string
-  description = "Loki compactor IAM role ARN"
-  default     = ""
-}
 
 variable "grafana_service_account_name" {
   type        = string
   description = "Name of the Kubernetes service account for Grafana"
-  default     = "grafana"
 }
 
 variable "grafana_iam_role_arn" {
   type        = string
   description = "Grafana IAM role ARN"
-  default     = ""
 }
 
 ## chart versions
@@ -179,12 +143,6 @@ variable "helm_release_name_prometheus" {
   default     = "kube-prometheus-stack"
 }
 
-variable "helm_release_name_grafana" {
-  type        = string
-  description = "Release name"
-  default     = "grafana"
-}
-
 variable "helm_release_name_loki" {
   type        = string
   description = "Release name"
@@ -218,7 +176,7 @@ variable "helm_timeout_seconds" {
 variable "helm_recreate_pods" {
   type        = bool
   description = "Perform pods restart during upgrade/rollback ?"
-  default     = false
+  default     = true
 }
 
 variable "helm_atomic_creation" {

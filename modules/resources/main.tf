@@ -1,12 +1,10 @@
 data "aws_region" "current" {}
 
 locals {
-  prom_svc_port   = "80"
-  prom_svc        = "kube-prometheus-stack-prometheus.${var.k8s_namespace}.svc.cluster.local:${local.prom_svc_port}"
-  loki_svc        = var.loki_mode == "distributed" ? "loki-distributed-gateway.${var.k8s_namespace}.svc.cluster.local" : "loki.${var.k8s_namespace}.svc.cluster.local:3100"
-  grafana_svc     = "grafana.${var.k8s_namespace}.svc.cluster.local"
-  has_bucket_name = var.loki_storage_s3_bucket_name != null && var.loki_storage_s3_bucket_name != ""
-  loki_enabled    = var.loki_enabled
+  prom_svc_port = "80"
+  prom_svc      = "kube-prometheus-stack-prometheus.${var.k8s_namespace}:${local.prom_svc_port}"
+  loki_svc      = var.loki_mode == "distributed" ? "loki-distributed-gateway.${var.k8s_namespace}" : "loki.${var.k8s_namespace}:3100"
+  grafana_svc   = "kube-prometheus-stack-grafana.${var.k8s_namespace}"
 }
 
 resource "helm_release" "metrics_server" {
@@ -44,8 +42,23 @@ resource "helm_release" "metrics_server" {
   }
 }
 
+resource "kubernetes_persistent_volume_claim_v1" "grafana_pvc" {
+  metadata {
+    generate_name = "kube-prometheus-stack-grafana"
+    namespace     = var.k8s_namespace
+  }
+  spec {
+    access_modes = ["ReadWriteOnce"]
+    resources {
+      requests = {
+        storage = "10Gi"
+      }
+    }
+  }
+  wait_until_bound = false
+}
+
 resource "helm_release" "prometheus" {
-  count = var.prometheus_enabled ? 1 : 0
   depends_on = [
     helm_release.metrics_server,
   ]
@@ -73,20 +86,15 @@ resource "helm_release" "prometheus" {
   skip_crds         = var.helm_skip_crds
 
   values = [
-    templatefile("${path.module}/helm-values/grafana.yml.tpl", {
+    templatefile("${path.module}/helm-values/kube-prometheus-stack.tpl", {
       aws_region                   = data.aws_region.current.name
       prom_svc                     = local.prom_svc
       loki_svc                     = local.loki_svc
       grafana_service_account_name = var.grafana_service_account_name
       grafana_iam_role_arn         = var.grafana_iam_role_arn
+      grafana_pvc_claim            = kubernetes_persistent_volume_claim_v1.grafana_pvc.metadata[0].name
     })
   ]
-
-  set {
-    name  = "grafana.enabled"
-    value = var.grafana_enabled ? 1 : 0
-    type  = "auto"
-  }
 
   set {
     name  = "prometheus.service.port"
@@ -113,7 +121,7 @@ resource "helm_release" "prometheus" {
 }
 
 resource "helm_release" "loki" {
-  count      = local.loki_enabled && var.loki_mode == "single" ? 1 : 0
+  count      = var.loki_mode == "single" ? 1 : 0
   name       = coalesce(var.helm_release_name_loki, "loki")
   repository = "https://grafana.github.io/helm-charts"
   chart      = "loki"
@@ -152,7 +160,7 @@ resource "helm_release" "loki" {
 }
 
 resource "helm_release" "loki_distributed" {
-  count      = var.loki_enabled && var.loki_mode == "distributed" ? 1 : 0
+  count      = var.loki_mode == "distributed" ? 1 : 0
   name       = coalesce(var.helm_release_name_loki, "loki-distributed")
   repository = "https://grafana.github.io/helm-charts"
   chart      = "loki-distributed"
@@ -182,8 +190,8 @@ resource "helm_release" "loki_distributed" {
       bucket_name                         = var.loki_storage_s3_bucket_name
       loki_iam_role_arn                   = var.loki_iam_role_arn
       loki_service_account_name           = var.loki_service_account_name
-      loki_compactor_iam_role_arn         = var.loki_compactor_iam_role_arn
-      loki_compactor_service_account_name = var.loki_compactor_service_account_name
+      loki_compactor_iam_role_arn         = var.loki_iam_role_arn
+      loki_compactor_service_account_name = var.loki_service_account_name
     })
   ]
   dynamic "set" {
@@ -197,7 +205,7 @@ resource "helm_release" "loki_distributed" {
 }
 
 resource "helm_release" "fluent_bit" {
-  count      = var.loki_enabled && var.loki_aggregator == "fluent-bit" ? 1 : 0
+  count      = var.loki_aggregator == "fluent-bit" ? 1 : 0
   name       = var.helm_release_name_fluent_bit
   repository = "https://grafana.github.io/helm-charts"
   chart      = "fluent-bit"
@@ -238,7 +246,7 @@ resource "helm_release" "fluent_bit" {
 }
 
 resource "helm_release" "promtail" {
-  count      = var.loki_enabled && var.loki_aggregator == "promtail" ? 1 : 0
+  count      = var.loki_aggregator == "promtail" ? 1 : 0
   name       = var.helm_release_name_promtail
   repository = "https://grafana.github.io/helm-charts"
   chart      = "promtail"
@@ -280,8 +288,7 @@ resource "helm_release" "promtail" {
 
 locals {
   release_metrics_server = var.metrics_server_enabled ? helm_release.metrics_server[0] : null
-  release_prometheus     = var.prometheus_enabled ? helm_release.prometheus[0] : null
-  release_loki           = local.loki_enabled ? (var.loki_mode == "distributed" ? helm_release.loki_distributed[0] : helm_release.loki[0]) : null
-  release_aggregator     = local.loki_enabled ? (var.loki_aggregator == "promtail" ? helm_release.promtail[0] : helm_release.fluent_bit[0]) : null
-  namespace              = var.k8s_namespace
+  release_prometheus     = helm_release.prometheus
+  release_loki           = (var.loki_mode == "distributed" ? helm_release.loki_distributed : helm_release.loki)
+  release_aggregator     = (var.loki_aggregator == "promtail" ? helm_release.promtail : helm_release.fluent_bit)
 }

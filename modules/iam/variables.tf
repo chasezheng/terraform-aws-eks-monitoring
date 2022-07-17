@@ -1,20 +1,14 @@
-variable "cluster_oidc_provider" {
+variable "oidc_url" {
   type        = string
   description = "OpenID Connect (OIDC) Identity Provider associated with the Kubernetes cluster"
 }
 
-variable "k8s_namespace" {
-  type        = string
-  description = "Name of the Kubernetes namespace to which resources will be deployed"
-  default     = "monitoring"
+variable "oidc_arn" {
+  type = string
 }
 
-## loki
-
-variable "loki_enabled" {
-  type        = bool
-  description = "Enable Loki?"
-  default     = true
+variable "k8s_namespace" {
+  type = string
 }
 
 variable "loki_k8s_sa_name" {
@@ -23,44 +17,13 @@ variable "loki_k8s_sa_name" {
   default     = "loki"
 }
 
-variable "loki_compactor_k8s_sa_name" {
-  type        = string
-  description = "Name of the Kubernetes service account for the Loki compactor"
-  default     = "loki-compactor"
-}
-
-variable "loki_iam_role_name" {
-  type        = string
-  description = "Name of IAM role for Loki"
-  default     = "loki"
-}
-
-variable "loki_compactor_iam_role_name" {
-  type        = string
-  description = "Name of IAM role for Loki Compactor"
-  default     = "loki-compactor"
-}
-
-variable "loki_storage_s3_bucket_name" {
-  type        = string
-  description = "Name of the S3 bucket used for Loki storage"
-  default     = ""
+variable "loki_storage_s3_bucket_arn" {
+  type = string
 }
 
 variable "loki_storage_kms_key_arn" {
-  type = string
+  type        = string
   description = "(Optional) ARN of the KMS key used for S3 encryption"
-  default = ""
-}
-
-## end loki
-
-## grafana
-
-variable "grafana_enabled" {
-  type        = bool
-  description = "Enable Grafana?"
-  default     = true
 }
 
 variable "grafana_k8s_sa_name" {
@@ -68,11 +31,3 @@ variable "grafana_k8s_sa_name" {
   description = "Name of the Kubernetes service account for Grafana"
   default     = "grafana"
 }
-
-variable "grafana_iam_role_name" {
-  type        = string
-  description = "Name of IAM role for Grafana"
-  default     = "grafana"
-}
-
-## end grafana

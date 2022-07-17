@@ -19,11 +19,10 @@ grafana:
         name: memory
         targetAverageUtilization: 60
 
-persistence:
-  enabled: false
-  inMemory:
+  persistence:
     enabled: true
-    sizeLimit: 500Mi
+    type: pvc
+    existingClaim: ${grafana_pvc_claim}
 
   plugins:
     - grafana-piechart-panel
@@ -37,19 +36,20 @@ persistence:
           type: prometheus
           url: http://${prom_svc}
           access: proxy
-          isDefault: true
+          isDefault: false
           basicAuth: false
           withCredentials: false
-          editable: true
+          editable: false
         - name: Loki
           type: loki
           url: http://${loki_svc}
           isDefault: false
           basicAuth: false
           withCredentials: false
-          editable: true
+          editable: false
         - name: CloudWatch
           type: cloudwatch
+          isDefault: false
           access: proxy
           uid: cloudwatch
           editable: false
