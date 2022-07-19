@@ -101,7 +101,7 @@ variable "loki_storage_s3_bucket_name" {
 variable "loki_storage_s3_force_destroy" {
   type        = bool
   description = "Force destroy bucket when running `terraform destroy`?"
-  default     = false
+  default     = true
 }
 
 variable "loki_storage_kms_key_arn" {

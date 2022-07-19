@@ -12,7 +12,6 @@ variable "create_s3_bucket_id_suffix" {
 variable "s3_force_destroy" {
   type        = bool
   description = "Force destroy bucket when running `terraform destroy`?"
-  default     = true
 }
 
 variable "kms_key_arn" {
