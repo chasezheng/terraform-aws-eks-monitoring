@@ -186,12 +186,10 @@ resource "helm_release" "loki_distributed" {
 
   values = [
     templatefile("${path.module}/helm-values/loki-distributed.yml.tpl", {
-      aws_region                          = data.aws_region.current.name
-      bucket_name                         = var.loki_storage_s3_bucket_name
-      loki_iam_role_arn                   = var.loki_iam_role_arn
-      loki_service_account_name           = var.loki_service_account_name
-      loki_compactor_iam_role_arn         = var.loki_iam_role_arn
-      loki_compactor_service_account_name = var.loki_service_account_name
+      aws_region                = data.aws_region.current.name
+      bucket_name               = var.loki_storage_s3_bucket_name
+      loki_iam_role_arn         = var.loki_iam_role_arn
+      loki_service_account_name = var.loki_service_account_name
     })
   ]
   dynamic "set" {

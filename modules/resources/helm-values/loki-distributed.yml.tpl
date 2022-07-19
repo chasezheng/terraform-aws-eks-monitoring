@@ -95,10 +95,10 @@ loki:
 compactor:
   enabled: true
   serviceAccount:
-    create: true
-    name: ${loki_compactor_service_account_name}
+    create: false
+    name: ${loki_service_account_name}
     annotations:
-      eks.amazonaws.com/role-arn: ${loki_compactor_iam_role_arn}
+      eks.amazonaws.com/role-arn: ${loki_iam_role_arn}
 
 ingester:
   persistence:
