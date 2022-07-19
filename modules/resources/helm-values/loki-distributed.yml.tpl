@@ -103,13 +103,3 @@ compactor:
 ingester:
   persistence:
     enabled: true
-  replicas: 2
-
-distributor:
-  replicas: 2
-
-querier:
-  replicas: 2
-
-queryFrontend:
-  replicas: 2
