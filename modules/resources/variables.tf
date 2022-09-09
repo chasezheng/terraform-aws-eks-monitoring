@@ -18,16 +18,6 @@ variable "loki_mode" {
   }
 }
 
-variable "loki_aggregator" {
-  type        = string
-  description = "Loki aggregator to install, must be either `promtail` or `fluent-bit`"
-  default     = "promtail"
-  validation {
-    condition     = can(regex("^promtail|fluent-bit", var.loki_aggregator))
-    error_message = "Must be one of `promtail` or `fluent-bit`."
-  }
-}
-
 variable "loki_storage_s3_bucket_name" {
   type        = string
   description = "Name of S3 bucket created for Loki storage"
@@ -59,37 +49,26 @@ variable "grafana_iam_role_arn" {
 variable "chart_version_metrics_server" {
   type        = string
   description = "Chart version"
-  default     = "3.8.2"
 }
 
 variable "chart_version_prometheus" {
   type        = string
   description = "Chart version"
-  default     = "37.2.0"
 }
 
 variable "chart_version_promtail" {
   type        = string
   description = "Chart version"
-  default     = "6.2.0"
 }
 
 variable "chart_version_loki_distributed" {
   type        = string
   description = "Chart version"
-  default     = "0.52.0"
-}
-
-variable "chart_version_fluent_bit" {
-  type        = string
-  description = "Chart version"
-  default     = "2.3.1"
 }
 
 variable "chart_version_loki" {
   type        = string
   description = "Chart version"
-  default     = "2.13.0"
 }
 
 variable "helm_values_metrics_server" {
@@ -113,11 +92,6 @@ variable "helm_values_loki_distributed" {
 }
 
 variable "helm_values_grafana" {
-  type    = map(string)
-  default = {}
-}
-
-variable "helm_values_fluent_bit" {
   type    = map(string)
   default = {}
 }
@@ -155,12 +129,6 @@ variable "helm_release_name_promtail" {
   default     = "promtail"
 }
 
-variable "helm_release_name_fluent_bit" {
-  type        = string
-  description = "Release name"
-  default     = "fluent-bit"
-}
-
 variable "helm_max_history" {
   type        = number
   description = "Maximum number of release versions stored per release; `0` means no limit"
@@ -170,7 +138,7 @@ variable "helm_max_history" {
 variable "helm_timeout_seconds" {
   type        = number
   description = "Time in seconds to wait for any individual kubernetes operation"
-  default     = 300
+  default     = 600
 }
 
 variable "helm_recreate_pods" {

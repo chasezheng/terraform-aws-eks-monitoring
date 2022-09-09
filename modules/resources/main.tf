@@ -202,49 +202,7 @@ resource "helm_release" "loki_distributed" {
   }
 }
 
-resource "helm_release" "fluent_bit" {
-  count      = var.loki_aggregator == "fluent-bit" ? 1 : 0
-  name       = var.helm_release_name_fluent_bit
-  repository = "https://grafana.github.io/helm-charts"
-  chart      = "fluent-bit"
-  namespace  = var.k8s_namespace
-  version    = var.chart_version_fluent_bit
-
-  recreate_pods     = var.helm_recreate_pods
-  atomic            = var.helm_atomic_creation
-  cleanup_on_fail   = var.helm_cleanup_on_fail
-  wait              = var.helm_wait_for_completion
-  wait_for_jobs     = var.helm_wait_for_jobs
-  timeout           = var.helm_timeout_seconds
-  max_history       = var.helm_max_history
-  verify            = var.helm_verify
-  keyring           = var.helm_keyring
-  reuse_values      = var.helm_reuse_values
-  reset_values      = var.helm_reset_values
-  force_update      = var.helm_force_update
-  replace           = var.helm_replace
-  create_namespace  = var.helm_create_namespace
-  dependency_update = var.helm_dependency_update
-  skip_crds         = var.helm_skip_crds
-
-  values = [
-    templatefile("${path.module}/helm-values/fluent-bit.yml.tpl", {
-      loki_svc = replace(local.loki_svc, ":3100", "")
-    })
-  ]
-
-  dynamic "set" {
-    for_each = var.helm_values_fluent_bit
-    content {
-      name  = set.key
-      value = set.value
-      type  = "auto"
-    }
-  }
-}
-
 resource "helm_release" "promtail" {
-  count      = var.loki_aggregator == "promtail" ? 1 : 0
   name       = var.helm_release_name_promtail
   repository = "https://grafana.github.io/helm-charts"
   chart      = "promtail"
@@ -288,5 +246,5 @@ locals {
   release_metrics_server = var.metrics_server_enabled ? helm_release.metrics_server[0] : null
   release_prometheus     = helm_release.prometheus
   release_loki           = (var.loki_mode == "distributed" ? helm_release.loki_distributed : helm_release.loki)
-  release_aggregator     = (var.loki_aggregator == "promtail" ? helm_release.promtail : helm_release.fluent_bit)
+  release_aggregator     = "promtail"
 }

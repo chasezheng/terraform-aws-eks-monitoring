@@ -49,9 +49,7 @@ module "resources" {
   chart_version_prometheus       = var.chart_version_prometheus
   chart_version_promtail         = var.chart_version_promtail
   chart_version_loki_distributed = var.chart_version_loki_distributed
-  chart_version_fluent_bit       = var.chart_version_fluent_bit
   chart_version_loki             = var.chart_version_loki
-  helm_values_fluent_bit         = var.helm_values_fluent_bit
   helm_values_grafana            = var.helm_values_grafana
   helm_values_loki               = var.helm_values_loki
   helm_values_loki_distributed   = var.helm_values_loki_distributed

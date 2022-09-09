@@ -44,11 +44,6 @@ variable "helm_values_grafana" {
   default = {}
 }
 
-variable "helm_values_fluent_bit" {
-  type    = map(string)
-  default = {}
-}
-
 variable "helm_values_loki" {
   type    = map(string)
   default = {}
@@ -64,15 +59,6 @@ variable "loki_mode" {
   }
 }
 
-variable "loki_aggregator" {
-  type        = string
-  description = "Loki aggregator to install, must be either `promtail` or `fluent-bit`"
-  default     = "promtail"
-  validation {
-    condition     = can(regex("^promtail|fluent-bit", var.loki_aggregator))
-    error_message = "Must be one of `promtail` or `fluent-bit`."
-  }
-}
 
 variable "create_loki_storage" {
   type        = bool
@@ -151,31 +137,26 @@ variable "chart_version_metrics_server" {
 variable "chart_version_prometheus" {
   type        = string
   description = "Chart version"
-  default     = "37.2.0"
+  default     = "39.11.0"
 }
 
 variable "chart_version_promtail" {
   type        = string
   description = "Chart version"
-  default     = "6.2.0"
+  default     = "6.3.0"
 }
 
 variable "chart_version_loki_distributed" {
   type        = string
   description = "Chart version"
-  default     = "0.52.0"
+  default     = "0.56.7"
 }
 
-variable "chart_version_fluent_bit" {
-  type        = string
-  description = "Chart version"
-  default     = "2.3.1"
-}
 
 variable "chart_version_loki" {
   type        = string
   description = "Chart version"
-  default     = "2.13.0"
+  default     = "3.0.3"
 }
 
 ## end chart versions

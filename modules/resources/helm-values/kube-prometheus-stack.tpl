@@ -1,3 +1,14 @@
+prometheus:
+  prometheusSpec:
+    ruleSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+
+thanosRuler:
+  thanosRulerSpec:
+    ruleSelectorNilUsesHelmValues: false
+
 grafana:
   serviceAccount:
     create: true
@@ -25,7 +36,6 @@ grafana:
     existingClaim: ${grafana_pvc_claim}
 
   plugins:
-    - grafana-piechart-panel
     - grafana-kubernetes-app
 
   datasources:
@@ -56,4 +66,24 @@ grafana:
           jsonData:
             authType: default
             defaultRegion: ${aws_region}
-
+  imageRenderer:
+    enabled:  true
+    revisionHistoryLimit: 2
+    networkPolicy:
+      limitIngress: false
+    image:
+      tag: "3.6.1"
+      pullPolicy: "IfNotPresent"
+  sidecar:
+    dashboards:
+      enabled: true
+      searchNamespace: "ALL"
+    datasources:
+      enabled: true
+      searchNamespace: "ALL"
+    plugins:
+      enabled: true
+      searchNamespace: "ALL"
+    notifiers:
+      enabled: true
+      searchNamespace: "ALL"
