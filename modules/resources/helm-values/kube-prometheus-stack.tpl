@@ -72,7 +72,7 @@ grafana:
     networkPolicy:
       limitIngress: false
     image:
-      tag: "3.6.1"
+      tag: "3.9.0"
       pullPolicy: "IfNotPresent"
   sidecar:
     dashboards:

@@ -8,6 +8,9 @@ loki:
   config: |
     auth_enabled: false
 
+    common:
+      compactor_address: {{ include "loki.compactorFullname" . }}:3100
+
     server:
       http_listen_port: 3100
 
@@ -31,7 +34,7 @@ loki:
         s3: s3://${aws_region}/${bucket_name}
 
     compactor:
-      working_directory: /loki/compactor
+      working_directory: /var/loki/compactor
       shared_store: s3
 
     distributor:
@@ -69,6 +72,7 @@ loki:
         - {{ include "loki.fullname" . }}-memberlist
 
     limits_config:
+      retention_period: 720h
       ingestion_rate_mb: 10
       ingestion_burst_size_mb: 20
       enforce_metric_name: false

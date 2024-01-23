@@ -137,7 +137,7 @@ variable "chart_version_metrics_server" {
 variable "chart_version_prometheus" {
   type        = string
   description = "Chart version"
-  default     = "39.11.0"
+  default     = "56.0.3"
 }
 
 variable "chart_version_promtail" {
@@ -149,7 +149,7 @@ variable "chart_version_promtail" {
 variable "chart_version_loki_distributed" {
   type        = string
   description = "Chart version"
-  default     = "0.56.7"
+  default     = "0.78.1"
 }
 
 
